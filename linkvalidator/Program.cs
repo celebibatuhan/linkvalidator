@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace linkvalidator
@@ -9,23 +11,30 @@ namespace linkvalidator
 
         public static void Main()
         {
-
-            Regex rx = new Regex(@"\b(\w*.jpg\w*)\b",RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
+            Regex rx = new Regex(@"\b(\w*.jpg\w*)|(\w*.png\w*)|(\w*.jpeg\w*)|(\w*.gif\w*)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            
             string path = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\Documents.txt";
             StreamReader text = new StreamReader(path);
+
             
-            MatchCollection matches = rx.Matches(path);
-
-            Console.WriteLine("{0} matches found in:\n   {1}",matches.Count,text);
-
-            foreach (Match match in matches)
+            List<string> links = File.ReadLines(path).ToList();
+            string output;
+            for (var i = 0; i < links.Count; i++)
             {
-                GroupCollection groups = match.Groups;
-                Console.WriteLine("'{0}' repeated at positions {1} and {2}",groups["word"].Value,groups[0].Index, groups[1].Index);
+                MatchCollection matches = rx.Matches(links[i]);
+                
+                foreach (Match match in matches)
+                {
+                    Console.WriteLine("That is what your looking for : {0} ",links[i]);
+                }
             }
+            
+            
+            
+            
 
         }
+
 
     }
 }
