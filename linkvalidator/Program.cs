@@ -8,23 +8,23 @@ using System.Text.RegularExpressions;
 namespace linkvalidator
 {
     public class Program
-    {  
+    {
 
         public static void Main()
         {
-            
+
             Regex rx = new Regex(@"\b(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            
+
             string path = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\Documents.txt";
-            //StreamReader text = new StreamReader(path);
-            
+
             List<string> links = File.ReadLines(path).ToList();
+            
             for (var i = 0; i < links.Count; i++)
             {
                 MatchCollection matches = rx.Matches(links[i]);
-                
+
                 foreach (Match match in matches)
-                {                  
+                {
                     Console.WriteLine("That is what you're looking for: " + links[i]);
                     HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(links[i]);
 
@@ -47,8 +47,8 @@ namespace linkvalidator
                     {
                         Console.WriteLine(wec.Status.ToString());
                         if (wec.Status == WebExceptionStatus.ProtocolError)
-                        {                            
-                            Console.WriteLine(string.Format("Status Description : 404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));                             
+                        {
+                            Console.WriteLine(string.Format("404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));
                         }
                     }
 
@@ -58,21 +58,6 @@ namespace linkvalidator
                     //}
                 }
             }
-
-
-
-
-
-
-           
-
-
-
-
-
-
         }
-
-
     }
 }
