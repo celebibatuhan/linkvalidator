@@ -9,7 +9,6 @@ namespace linkvalidator
 {
     public class Program
     {
-
         public static void Main()
         {
 
@@ -18,18 +17,21 @@ namespace linkvalidator
             string path = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\Documents.txt";
 
             List<string> links = File.ReadLines(path).ToList();
-            
+
+            HttpWebResponse httpRes = null;
+
             for (var i = 0; i < links.Count; i++)
             {
                 MatchCollection matches = rx.Matches(links[i]);
 
                 foreach (Match match in matches)
                 {
-                    Console.WriteLine("That is what you're looking for: " + links[i]);
+                    Console.WriteLine();
+                    Console.WriteLine("Your URL: " + links[i]);
+                    Console.WriteLine();
+
                     HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(links[i]);
-
-                    HttpWebResponse httpRes = null;
-
+                    
                     try
                     {
                         httpRes = (HttpWebResponse)httpReq.GetResponse();
@@ -51,11 +53,34 @@ namespace linkvalidator
                             Console.WriteLine(string.Format("404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));
                         }
                     }
+                }
+            }
 
-                    //catch (Exception)
-                    //{
-                    //    throw;
-                    //}
+            Console.WriteLine();
+            Console.WriteLine("Enter a url for checking validation :");
+            string userlink = Console.ReadLine();
+
+            HttpWebRequest httpRequ = (HttpWebRequest)WebRequest.Create(userlink);
+            
+            try
+            {
+                httpRes = (HttpWebResponse)httpRequ.GetResponse();
+                if (httpRes.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine("404 Not Found");
+                }
+                else
+                {
+                    Console.WriteLine("Succeed!");
+                }
+            }
+
+            catch (WebException wec)
+            {
+                Console.WriteLine(wec.Status.ToString());
+                if (wec.Status == WebExceptionStatus.ProtocolError)
+                {
+                    Console.WriteLine(string.Format("404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));
                 }
             }
         }
