@@ -4,13 +4,37 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Data.SqlClient;
 
-namespace linkvalidator
+
+
+
+
+namespace linkvalidator 
 {
+
     public class Program
     {
+        
+
+
         public static void Main()
         {
+            //string connetionString = "Data Source=sqltest;Database=YemekSepeti_productcatalog;User id=YEMEKSEPETI\batuhan.celebi";
+            //SqlConnection cnn = new SqlConnection(connetionString);
+            //cnn.Open();
+          
+            //SqlCommand cmd1 = new SqlCommand(
+            //    "SELECT TOP(20) r.DisplayName AS Restaurant, c.DisplayName AS Category, p.DisplayName AS Product, p.ProductId, p.ImagePath " +
+            //    "FROM YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr - TR] p(NOLOCK) INNER JOIN YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr - TR] c(NOLOCK) ON c.CategoryName = p.PrimaryParentCategory " +
+            //    "AND p.CatalogName = c.CatalogName INNER JOIN YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr - TR] r(NOLOCK) ON r.CategoryName = c.PrimaryParentCategory AND r.CatalogName = c.CatalogName " +
+            //    "WHERE p.DefinitionName = 'food' and p.ImagePath != '...'", cnn);
+
+            //Console.WriteLine(cmd1);
+            //Console.WriteLine();
+
+            //cnn.Close();
+
             Regex rx = new Regex(@"\b(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             string path = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\Documents.txt";
@@ -43,7 +67,6 @@ namespace linkvalidator
                             Console.WriteLine("Succeed!");
                         }
                     }
-
                     catch (WebException wec)
                     {
                         Console.WriteLine(wec.Status.ToString());
@@ -52,8 +75,12 @@ namespace linkvalidator
                             Console.WriteLine(string.Format("404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));
                         }
                     }
+
+                   
                 }
             }
+
+            
         }
     }
 }
