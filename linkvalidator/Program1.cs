@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 
 
 namespace linkvalidator
@@ -20,32 +17,33 @@ namespace linkvalidator
                 connection.Open();
                 Console.WriteLine("DB Connection : {0}", connection.State);
 
-                string query = @"SELECT top(150) r.DisplayName as Restaurant, c.DisplayName AS Category, p.DisplayName AS Product, p.ImagePath, p.ProductId
-		                         FROM YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr-TR] p (NOLOCK)
-		                         INNER JOIN YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr-TR] c (NOLOCK) ON c.CategoryName = p.PrimaryParentCategory AND p.CatalogName = c.CatalogName
-		                         INNER JOIN YemekSepeti_productcatalog.dbo.[TR_ISTANBUL_tr-TR] r (NOLOCK) ON r.CategoryName = c.PrimaryParentCategory AND r.CatalogName = c.CatalogName
-		                         WHERE p.DefinitionName = 'food' AND p.ImagePath LIKE '/%'";
+                string query = @"SELECT
+                                  [RestaurantName]
+                                 ,[RestaurantCategoryName]
+                                 ,[ProductName]
+                                 ,[ProductImage]
+                                 ,[ProductId]
+                                 FROM [YemekSepeti_productcatalog].[dbo].[All_Products]
+                                 WHERE [ProductImage] LIKE '/%'";
 
                 string exportPath = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\";
                 string exportCsv = "404List.csv";
                 StreamWriter csvFile = null;
                 HttpWebResponse httpRes;
-
+                
                 try
-                {
+                {   
                     SqlCommand sqlSelect = new SqlCommand(query, connection);
                     SqlDataReader reader = sqlSelect.ExecuteReader();
 
                     csvFile = new StreamWriter(@exportPath + exportCsv);
-                    csvFile.WriteLine(String.Format("\"{0}\";\"{1}\";\"{2}\";" + "\"{3}\";\"{4}\"", reader.GetName(0), reader.GetName(1), reader.GetName(2), reader.GetName(3), reader.GetName(4)));
+                    csvFile.WriteLine(String.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\"", reader.GetName(0), reader.GetName(1), reader.GetName(2), reader.GetName(3), reader.GetName(4)));
 
                     while (reader.Read())
                     {
-                        string imgpat = reader[3].ToString();
-                        string imgpath = "https://cdn.yemeksepeti.com" + imgpat;
-                        Console.WriteLine(imgpath);
-                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(imgpath);
-
+                        string ImgPath = "https://cdn.yemeksepeti.com" + reader[3].ToString();
+                        //Console.WriteLine(ImgPath);
+                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(ImgPath);
                         try
                         {
                             httpRes = (HttpWebResponse)httpReq.GetResponse();
@@ -63,9 +61,9 @@ namespace linkvalidator
                             if (wec.Status == WebExceptionStatus.ProtocolError)
                             {
                                 Console.WriteLine(string.Format("404 {0} (Invalid Image URL)", ((HttpWebResponse)wec.Response).StatusDescription));
-                                csvFile.WriteLine(String.Format("\"{0}\";\"{1}\";\"{2}\";" + "\"{3}\";\"{4}\"", reader[0], reader[1], reader[2], reader[3], reader[4]));
+                                csvFile.WriteLine(String.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\"", reader[0], reader[1], reader[2], reader[3], reader[4]));
                             }
-                        } 
+                        }
                     }
                 }
                 catch (Exception)
