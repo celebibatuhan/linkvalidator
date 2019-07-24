@@ -10,14 +10,14 @@ namespace linkvalidator
     {
         public static void Main()
         {
-            string connectionString = "Data Source=sqltest;Initial Catalog=YemekSepeti_productcatalog;" + "Integrated Security=true;";
+            string connectionString = "Data Source=sqltest;Initial Catalog=YemekSepeti_productcatalog;Integrated Security=true;";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 Console.WriteLine("DB Connection : {0}", connection.State);
 
-                string query = @"SELECT
+                string query = @"SELECT top 10
                                   [RestaurantName]
                                  ,[RestaurantCategoryName]
                                  ,[ProductName]
@@ -41,9 +41,7 @@ namespace linkvalidator
 
                     while (reader.Read())
                     {
-                        string ImgPath = "https://cdn.yemeksepeti.com" + reader[3].ToString();
-                        //Console.WriteLine(ImgPath);
-                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(ImgPath);
+                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create("https://cdn.yemeksepeti.com" + reader[3].ToString());
                         try
                         {
                             httpRes = (HttpWebResponse)httpReq.GetResponse();
