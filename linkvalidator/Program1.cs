@@ -17,7 +17,7 @@ namespace linkvalidator
                 connection.Open();
                 Console.WriteLine("DB Connection : {0}", connection.State);
 
-                string query = @"SELECT top 10
+                string query = @"SELECT top 100
                                   [RestaurantName]
                                  ,[RestaurantCategoryName]
                                  ,[ProductName]
@@ -30,18 +30,20 @@ namespace linkvalidator
                 string exportCsv = "404List.csv";
                 StreamWriter csvFile = null;
                 HttpWebResponse httpRes;
-                
+
                 try
-                {   
+                {
                     SqlCommand sqlSelect = new SqlCommand(query, connection);
                     SqlDataReader reader = sqlSelect.ExecuteReader();
 
                     csvFile = new StreamWriter(@exportPath + exportCsv);
                     csvFile.WriteLine(String.Format("\"{0}\";\"{1}\";\"{2}\";\"{3}\";\"{4}\"", reader.GetName(0), reader.GetName(1), reader.GetName(2), reader.GetName(3), reader.GetName(4)));
+                    
 
                     while (reader.Read())
                     {
-                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create("https://cdn.yemeksepeti.com" + reader[3].ToString());
+                        string ImgPath = "https://cdn.yemeksepeti.com" + reader[3].ToString();
+                        HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(ImgPath);
                         try
                         {
                             httpRes = (HttpWebResponse)httpReq.GetResponse();
@@ -66,12 +68,12 @@ namespace linkvalidator
                 }
                 catch (Exception)
                 {
-                Console.WriteLine("Data export unsuccessful.");
-                Environment.Exit(0);
+                    Console.WriteLine("Data export unsuccessful.");
+                    Environment.Exit(0);
                 }
                 finally
                 {
-                connection.Close();
+                    connection.Close();
                 csvFile.Close();
                 }
             }
