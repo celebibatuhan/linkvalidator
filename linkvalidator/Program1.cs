@@ -17,7 +17,7 @@ namespace linkvalidator
                 connection.Open();
                 Console.WriteLine("DB Connection : {0}", connection.State);
 
-                string query = @"SELECT
+                string query = @"SELECT top 10
                                   [RestaurantName]
                                  ,[RestaurantCategoryName]
                                  ,[ProductName]
@@ -26,7 +26,7 @@ namespace linkvalidator
                                  FROM [YemekSepeti_productcatalog].[dbo].[All_Products]
                                  WHERE [ProductImage] LIKE '/%'";
 
-                string exportPath = @"C:\Users\batuhan.celebi\source\repos\linkvalidator\linkvalidator\";
+                string exportPath = @"C:\Users\";
                 string exportCsv = "404List.csv";
                 StreamWriter csvFile = null;
                 HttpWebResponse httpRes;
@@ -66,7 +66,7 @@ namespace linkvalidator
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                 Console.WriteLine("Data export unsuccessful.");
                 Environment.Exit(0);
